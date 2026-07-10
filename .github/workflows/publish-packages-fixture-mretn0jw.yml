@@ -1,0 +1,22 @@
+name: Publish package fixture
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build disposable package
+        run: |
+          mkdir -p fixture-package
+          cat > fixture-package/package.json <<'EOF'
+          {"name":"@jeet-org-h2/codex-packages-fixture-mretn0jw","version":"1.0.0","description":"Disposable API test fixture","publishConfig":{"registry":"https://npm.pkg.github.com"}}
+          EOF
+          echo "module.exports = {};" > fixture-package/index.js
+      - name: Publish fixture
+        working-directory: fixture-package
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
