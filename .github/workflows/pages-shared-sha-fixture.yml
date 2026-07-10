@@ -13,7 +13,7 @@ jobs:
   fixture:
     runs-on: ubuntu-latest
     environment:
-      name: github-pages
+      name: pages-shared-sha-fixture
     steps:
       - name: Build disposable Pages artifact
         run: |
