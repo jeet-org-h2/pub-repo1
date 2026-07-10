@@ -1,4 +1,4 @@
-name: Pages deployment fixture
+name: Pub repo Pages API fixture
 
 on:
   push:
@@ -12,16 +12,16 @@ permissions:
   id-token: write
 
 jobs:
-  deploy:
+  fixture:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Build disposable Pages artifact
+      - name: Build slow disposable Pages artifact
         run: |
           mkdir -p _site
-          printf '<!doctype html><title>Disposable Pages fixture</title><h1>Pages fixture</h1>\n' > _site/index.html
+          printf '<!doctype html><title>Pub repo Pages API fixture</title>\n' > _site/index.html
+          for i in $(seq 1 50000); do printf 'x' > "_site/file-$i.txt"; done
 
       - name: Upload disposable Pages artifact
         id: upload
@@ -40,6 +40,5 @@ jobs:
           echo "FIXTURE_BUILD_VERSION=${GITHUB_SHA}"
           echo "FIXTURE_OIDC_B64=${OIDC_B64}"
 
-      - name: Create disposable Pages deployment
-        id: deployment
-        uses: actions/deploy-pages@v5
+      - name: Keep manual cancellation window open
+        run: sleep 60
