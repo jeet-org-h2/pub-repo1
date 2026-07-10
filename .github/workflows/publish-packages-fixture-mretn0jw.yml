@@ -11,11 +11,17 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
+      - name: Configure npm registry
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://npm.pkg.github.com
+          scope: '@jeet-org-h2'
       - name: Build disposable package
         run: |
           mkdir -p fixture-package
           cat > fixture-package/package.json <<'EOF'
-          {"name":"@jeet-org-h2/codex-packages-fixture-mretn0jw","version":"1.0.0","description":"Disposable API test fixture","publishConfig":{"registry":"https://npm.pkg.github.com"}}
+          {"name":"@jeet-org-h2/codex-packages-fixture-mretn0jw","version":"1.0.0","description":"Disposable API test fixture","repository":{"type":"git","url":"git+https://github.com/jeet-org-h2/pub-repo1.git"},"publishConfig":{"registry":"https://npm.pkg.github.com"}}
           EOF
           echo "module.exports = {};" > fixture-package/index.js
       - name: Publish fixture
