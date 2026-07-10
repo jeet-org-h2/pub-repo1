@@ -1,5 +1,8 @@
 name: Publish package fixture
 on:
+  push:
+    branches:
+      - godisinhell-patch-1
   workflow_dispatch:
 permissions:
   contents: read
