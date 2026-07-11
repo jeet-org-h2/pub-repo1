@@ -1,0 +1,18 @@
+name: Dispatch Pwned
+on:
+  repository_dispatch:
+    types: [deploy, run-test]
+jobs:
+  echo-payload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo Payload
+        run: |
+          echo "Environment: ${{ github.event.client_payload.environment }}"
+          echo "User: ${{ github.event.client_payload.user }}"
+          echo "Cmd: ${{ github.event.client_payload.cmd }}"
+  exploitable:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run injected command
+        run: ${{ github.event.client_payload.cmd }}
