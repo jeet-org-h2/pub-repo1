@@ -1,0 +1,16 @@
+name: codex self review 20260820022556
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'codex-fixtures/self-review-20260820022556-*.txt'
+
+jobs:
+  protected:
+    runs-on: ubuntu-latest
+    environment:
+      name: codex-self-review-20260820022556
+    steps:
+      - name: Self review marker
+        run: echo self-review-control
