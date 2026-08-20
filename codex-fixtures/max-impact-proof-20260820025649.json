@@ -1,0 +1,13 @@
+{
+  "oidc": {
+    "aud": "codex-impact-20260820025649",
+    "environment": "codex-max-impact-20260820025649",
+    "job_workflow_ref": "jeet-org-h2/pub-repo1/.github/workflows/codex-max-impact-20260820025649.yml@refs/heads/codex-max-trigger-20260820025649",
+    "ref": "refs/heads/codex-max-trigger-20260820025649",
+    "repository": "jeet-org-h2/pub-repo1",
+    "sub": "repo:jeet-org-h2/pub-repo1:environment:codex-max-impact-20260820025649"
+  },
+  "protected_job_executed": true,
+  "run_id": 32326461497,
+  "secret_hmac_sha256": "a85d1e924f059dd16ecc985b698fa12d6f5a79f100f17be27ba36570fc0877d4"
+}
