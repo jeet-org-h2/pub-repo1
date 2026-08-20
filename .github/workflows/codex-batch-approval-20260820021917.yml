@@ -1,0 +1,20 @@
+name: codex batch approval 20260820021917
+
+on:
+  workflow_dispatch:
+
+jobs:
+  authorized:
+    runs-on: ubuntu-latest
+    environment:
+      name: codex-batch-authorized-20260820021917
+    steps:
+      - name: Authorized marker
+        run: echo authorized
+  protected:
+    runs-on: ubuntu-latest
+    environment:
+      name: codex-batch-protected-20260820021917
+    steps:
+      - name: Protected marker
+        run: echo protected
