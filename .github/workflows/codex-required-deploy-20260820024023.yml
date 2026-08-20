@@ -1,0 +1,15 @@
+name: codex required deployment 20260820024023
+
+on:
+  push:
+    branches:
+      - codex-required-head-20260820024023
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: codex-required-deploy-20260820024023
+    steps:
+      - name: Benign deployment marker
+        run: echo deployed-${{ github.sha }}
