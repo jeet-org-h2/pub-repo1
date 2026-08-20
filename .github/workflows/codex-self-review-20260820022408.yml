@@ -1,0 +1,13 @@
+name: codex self review 20260820022408
+
+on:
+  workflow_dispatch:
+
+jobs:
+  protected:
+    runs-on: ubuntu-latest
+    environment:
+      name: codex-self-review-20260820022408
+    steps:
+      - name: Self review marker
+        run: echo self-review-control
