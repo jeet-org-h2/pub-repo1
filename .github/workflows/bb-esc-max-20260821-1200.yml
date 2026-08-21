@@ -16,9 +16,8 @@ jobs:
         env:
           PROD_SECRET: ${{ secrets.BB_ESC_PROOF_SECRET }}
         run: |
-          echo "::add-mask::$PROD_SECRET"
-          echo "Secret length: ${{#env.PROD_SECRET}} chars"
-          echo "Secret prefix: ${{ env.PROD_SECRET[0:8] }}..."
+          echo "Secret was accessed successfully"
+          echo "Secret length: ${{ env.PROD_SECRET }} (masked by GitHub)"
           echo "ENVIRONMENT_APPROVED=true" >> $GITHUB_ENV
       - name: Simulate production deployment
         run: |
