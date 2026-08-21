@@ -1,0 +1,16 @@
+name: bb esc reject 20260821-1215
+
+on:
+  push:
+    paths:
+      - ".github/workflows/bb-esc-reject-20260821-1215.yml"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: bb-esc-max-20260821-1200
+    steps:
+      - name: Production deploy step
+        run: echo "deploying to production with secrets"
