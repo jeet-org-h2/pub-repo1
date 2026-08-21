@@ -1,3 +1,4 @@
+# trigger 1787274717
 name: bb esc max 20260821-1200
 
 on:
@@ -10,16 +11,19 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     environment:
-      name: bb-esc-max-20260821-1200
+      # trigger 1787274717
+name: bb-esc-max-20260821-1200
     steps:
-      - name: Access environment secret
+      - # trigger 1787274717
+name: Access environment secret
         env:
           PROD_SECRET: ${{ secrets.BB_ESC_PROOF_SECRET }}
         run: |
           echo "Secret was accessed successfully"
           echo "Secret length: ${{ env.PROD_SECRET }} (masked by GitHub)"
           echo "ENVIRONMENT_APPROVED=true" >> $GITHUB_ENV
-      - name: Simulate production deployment
+      - # trigger 1787274717
+name: Simulate production deployment
         run: |
           echo "Deploying to bb-esc-max-20260821-1200 with production secrets..."
           echo "Deployment successful - production secrets were accessible"
